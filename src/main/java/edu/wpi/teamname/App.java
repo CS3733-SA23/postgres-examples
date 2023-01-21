@@ -1,6 +1,8 @@
 package edu.wpi.teamname;
 
+import edu.wpi.teamname.database.Database;
 import java.io.IOException;
+import java.sql.SQLException;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -14,15 +16,6 @@ public class App extends Application {
   @Override
   public void init() {
     log.info("Starting Up");
-
-    // Initialize database connection
-    //    try {
-    //      Database.init();
-    //    } catch (ClassNotFoundException e) {
-    //      throw new RuntimeException(e);
-    //    } catch (SQLException e) {
-    //      throw new RuntimeException(e);
-    //    }
   }
 
   @Override
@@ -40,11 +33,10 @@ public class App extends Application {
   public void stop() {
     log.info("Shutting Down");
 
-    // Close database connection
-    //    try {
-    //      Database.closeConnection();
-    //    } catch (SQLException e) {
-    //      throw new RuntimeException(e);
-    //    }
+    try {
+      Database.closeConnection();
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
   }
 }

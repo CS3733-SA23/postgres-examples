@@ -1,52 +1,60 @@
 package edu.wpi.teamname.database;
 
+import edu.wpi.teamname.database.thing.Thing;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Database {
-  private static Connection connection = null;
+  private Connection connection;
+  private static Database db;
 
-  public static void init() throws ClassNotFoundException, SQLException {
+  static {
+    try {
+      db = new Database();
+      db.init();
+    } catch (ClassNotFoundException | SQLException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  public Database() throws ClassNotFoundException, SQLException {
     Class.forName("org.postgresql.Driver");
     connection =
         DriverManager.getConnection(
             "jdbc:postgresql://localhost:5432/postgres", "postgres", "password");
+  }
 
-    if (!tableExists("things")) {
-      createTables();
+  public void init() throws SQLException {
+    if (!tableExists(Thing.getTableName())) {
+      Thing.initTable();
     }
   }
 
-  public static void createTables() throws SQLException {
-    connection.createStatement().executeUpdate("CREATE TABLE things(name VARCHAR);");
+  public static PreparedStatement prepareStatement(String s) throws SQLException {
+    return getInstance().connection.prepareStatement(s);
   }
 
-  public static void addThing(String name) throws SQLException {
-    String queryTemplate = "INSERT INTO things(name) VALUES(?);";
-    PreparedStatement stmt = connection.prepareStatement(queryTemplate);
-    stmt.setString(1, name);
-    stmt.executeUpdate();
+  public static PreparedStatement prepareKeyGeneratingStatement(String s) throws SQLException {
+    return getInstance().connection.prepareStatement(s, Statement.RETURN_GENERATED_KEYS);
   }
 
-  public static List<String> getThings() throws SQLException {
-    List<String> things = new ArrayList<String>();
+  public static ResultSet processQuery(String s) throws SQLException {
+    Statement stmt = getInstance().connection.createStatement();
+    ResultSet rs = stmt.executeQuery(s);
+    return rs;
+  }
 
-    if (connection != null) {
-      ResultSet rs2 = connection.createStatement().executeQuery("SELECT * FROM things;");
-      while (rs2.next()) {
-        things.add(rs2.getString(1));
-      }
-    }
-
-    return things;
+  public static int processUpdate(String s) throws SQLException {
+    Statement stmt = getInstance().connection.createStatement();
+    int numUpdated = stmt.executeUpdate(s);
+    return numUpdated;
   }
 
   public static void closeConnection() throws SQLException {
-    connection.close();
+    getInstance().connection.close();
+    db = null;
   }
 
-  private static boolean tableExists(String tableName) throws SQLException {
+  public static boolean tableExists(String tableName) throws SQLException {
     String query =
         "SELECT EXISTS (\n"
             + "SELECT FROM\n"
@@ -56,11 +64,15 @@ public class Database {
             + "   tablename  = ?\n"
             + ");\n";
 
-    PreparedStatement stmt = connection.prepareStatement(query);
+    PreparedStatement stmt = getInstance().connection.prepareStatement(query);
     stmt.setString(1, tableName);
     ResultSet rs = stmt.executeQuery();
     rs.next();
 
     return rs.getBoolean(1);
+  }
+
+  public static Database getInstance() {
+    return db;
   }
 }
