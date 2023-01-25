@@ -10,7 +10,6 @@ public class Database {
   static {
     try {
       db = new Database();
-      db.init();
     } catch (ClassNotFoundException | SQLException e) {
       throw new RuntimeException(e);
     }
@@ -20,10 +19,10 @@ public class Database {
     Class.forName("org.postgresql.Driver");
     connection =
         DriverManager.getConnection(
-            "jdbc:postgresql://localhost:5432/postgres", "postgres", "password");
+            "jdbc:postgresql://HOST:PORT/DATABASE", "USERNAME", "PASSWORD");
   }
 
-  public void init() throws SQLException {
+  public static void init() throws SQLException {
     if (!tableExists(Thing.getTableName())) {
       Thing.initTable();
     }

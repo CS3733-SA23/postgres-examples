@@ -16,6 +16,13 @@ public class App extends Application {
   @Override
   public void init() {
     log.info("Starting Up");
+
+    // initialize database connection and tables
+    try {
+      Database.init();
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   @Override
