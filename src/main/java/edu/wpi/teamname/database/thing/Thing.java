@@ -59,11 +59,11 @@ public class Thing {
   }
 
   public void update() throws SQLException {
-    String sql = "UPDATE thing SET id = ?, name = ?, data = ?;";
+    String sql = "UPDATE thing SET name = ?, data = ? WHERE id = ?";
     PreparedStatement ps = Database.prepareStatement(sql);
-    ps.setInt(1, id);
-    ps.setString(2, name);
-    ps.setString(3, data);
+    ps.setString(1, name);
+    ps.setString(2, data);
+    ps.setInt(3, id);
     ps.executeUpdate();
   }
 
