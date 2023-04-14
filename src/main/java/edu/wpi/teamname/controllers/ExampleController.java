@@ -1,8 +1,10 @@
 package edu.wpi.teamname.controllers;
 
-import edu.wpi.teamname.database.thing.Thing;
 import java.sql.SQLException;
 import java.util.List;
+
+import edu.wpi.teamname.database.thing.Thing;
+import edu.wpi.teamname.database.DataRepo;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -23,7 +25,7 @@ public class ExampleController {
   private void addData() {
     Thing thing = new Thing("test", "test");
     try {
-      thing.insert();
+      DataRepo.getInstance().insertThing(thing);
     } catch (SQLException e) {
       e.printStackTrace();
     }
@@ -34,7 +36,7 @@ public class ExampleController {
     List<Thing> things;
 
     try {
-      things = Thing.getAll();
+      things = DataRepo.getInstance().getAllThings();
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }

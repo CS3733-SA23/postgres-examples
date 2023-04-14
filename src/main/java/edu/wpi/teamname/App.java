@@ -1,8 +1,10 @@
 package edu.wpi.teamname;
 
-import edu.wpi.teamname.database.Database;
+import edu.wpi.teamname.database.DataRepo;
 import java.io.IOException;
 import java.sql.SQLException;
+
+import edu.wpi.teamname.database.Database;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -12,17 +14,11 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class App extends Application {
-
   @Override
-  public void init() {
+  public void init() throws SQLException, ClassNotFoundException {
     log.info("Starting Up");
 
-    // initialize database connection and tables
-    try {
-      Database.init();
-    } catch (SQLException e) {
-      throw new RuntimeException(e);
-    }
+    DataRepo.init();
   }
 
   @Override
@@ -41,7 +37,7 @@ public class App extends Application {
     log.info("Shutting Down");
 
     try {
-      Database.closeConnection();
+      DataRepo.getInstance().close();
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }
