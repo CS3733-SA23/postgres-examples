@@ -10,25 +10,21 @@ import java.util.List;
 public class DataRepo {
 
   private static DataRepo instance;
-  private Database db;
-  private ThingDAO thingDAO;
+  private final ThingDAO thingDAO;
+  private final Database db;
 
-  public static void init() throws SQLException, ClassNotFoundException {
-    instance = new DataRepo();
+  public static void init(String host, String database_name, int port, String username, String password) throws SQLException, ClassNotFoundException {
+    instance = new DataRepo(host, database_name, port, username, password);
   }
 
-  public DataRepo() throws ClassNotFoundException, SQLException {
-    db = new Database();
+  public DataRepo(String host, String database_name, int port, String username, String password) throws ClassNotFoundException, SQLException {
+    db = new Database(host, database_name, port, username, password);
     // init DAOs
-    init_daos();
+    thingDAO = new ThingDAO(db);
   }
 
   public static DataRepo getInstance() {
     return instance;
-  }
-
-  public void init_daos() throws SQLException {
-    thingDAO = new ThingDAO(db);
   }
 
   // Things

@@ -1,6 +1,7 @@
 package edu.wpi.teamname.controllers;
 
 import java.sql.SQLException;
+import java.util.LinkedList;
 import java.util.List;
 
 import edu.wpi.teamname.database.thing.Thing;
@@ -33,15 +34,15 @@ public class ExampleController {
 
   /** Queries data from database, displays in list */
   private void getData() {
-    List<Thing> things;
+    List<Thing> things = new LinkedList<>();
 
+    thingList.getChildren().clear();
     try {
       things = DataRepo.getInstance().getAllThings();
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }
 
-    thingList.getChildren().clear();
     for (Thing thing : things) {
       Label thingLabel = new Label(String.format("Thing %d", thing.getID()));
       thingList.getChildren().add(thingLabel);

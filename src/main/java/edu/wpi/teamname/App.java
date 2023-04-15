@@ -16,9 +16,12 @@ import lombok.extern.slf4j.Slf4j;
 public class App extends Application {
   @Override
   public void init() throws SQLException, ClassNotFoundException {
-    log.info("Starting Up");
-
-    DataRepo.init();
+    String username = ""; // in your app, get these from an untracked file
+    String password = "";
+    String db_name = "";
+    String host = "";
+    int port = 5432;
+    DataRepo.init(host, db_name, port, username, password);
   }
 
   @Override
